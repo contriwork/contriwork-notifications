@@ -4,14 +4,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "contriwork-notifications"
-description = "TODO: one-line description of the package."
+description = "Multi-channel notification client (Pushover, Telegram, Slack, Discord, SMTP, iMessage on macOS) with retry, rate limit, and quiet-hours support."
 readme = "README.md"
 requires-python = ">=3.13"
 license = { text = "MIT" }
 authors = [
   { name = "ContriWork", email = "maintainers@contriwork.dev" }
 ]
-keywords = ["contriwork"]
+keywords = ["contriwork", "notifications", "pushover", "telegram", "slack", "discord", "smtp", "imessage", "alerts"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",

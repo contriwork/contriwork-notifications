@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <PackageId>Contriwork.Notifications</PackageId>
-    <Description>TODO: one-line description of the package. Mirrors CONTRACT.md.</Description>
-    <PackageTags>contriwork</PackageTags>
+    <Description>Multi-channel notification client (Pushover, Telegram, Slack, Discord, SMTP) with retry, rate limit, and quiet-hours support.</Description>
+    <PackageTags>contriwork;notifications;pushover;telegram;slack;discord;smtp;alerts</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <IsPackable>true</IsPackable>
     <RootNamespace>Contriwork.Notifications</RootNamespace>
