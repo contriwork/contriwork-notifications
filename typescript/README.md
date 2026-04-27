@@ -1,22 +1,22 @@
-# @contriwork/PACKAGE_NAME (npm)
+# @contriwork/notifications (npm)
 
-Node.js / TypeScript adapter for the ContriWork **PackageName** port. One API surface, three languages (Python / .NET / npm) — this package is the Node.js implementation.
+Node.js / TypeScript adapter for the ContriWork **Notifications** port. One API surface, three languages (Python / .NET / npm) — this package is the Node.js implementation.
 
 Cross-language specification, contract, and release history live in the
-[GitHub repository](https://github.com/contriwork/contriwork-PACKAGE_NAME):
+[GitHub repository](https://github.com/contriwork/contriwork-notifications):
 
-- [Root README](https://github.com/contriwork/contriwork-PACKAGE_NAME/blob/main/README.md) — ecosystem overview
-- [`CONTRACT.md`](https://github.com/contriwork/contriwork-PACKAGE_NAME/blob/main/CONTRACT.md) — language-agnostic port spec
-- [`CHANGELOG.md`](https://github.com/contriwork/contriwork-PACKAGE_NAME/blob/main/CHANGELOG.md)
+- [Root README](https://github.com/contriwork/contriwork-notifications/blob/main/README.md) — ecosystem overview
+- [`CONTRACT.md`](https://github.com/contriwork/contriwork-notifications/blob/main/CONTRACT.md) — language-agnostic port spec
+- [`CHANGELOG.md`](https://github.com/contriwork/contriwork-notifications/blob/main/CHANGELOG.md)
 
-Sister packages: [`contriwork-PACKAGE_NAME`](https://pypi.org/project/contriwork-PACKAGE_NAME/) (PyPI), [`Contriwork.PackageName`](https://www.nuget.org/packages/Contriwork.PackageName) (NuGet).
+Sister packages: [`contriwork-notifications`](https://pypi.org/project/contriwork-notifications/) (PyPI), [`Contriwork.Notifications`](https://www.nuget.org/packages/Contriwork.Notifications) (NuGet).
 
 ## Install
 
 ```bash
-npm install @contriwork/PACKAGE_NAME
-# or: pnpm add @contriwork/PACKAGE_NAME
-# or: yarn add @contriwork/PACKAGE_NAME
+npm install @contriwork/notifications
+# or: pnpm add @contriwork/notifications
+# or: yarn add @contriwork/notifications
 ```
 
 Requires **Node.js ≥ 24**. Dual-published ESM + CJS with bundled `.d.ts` / `.d.cts` type declarations. Published with [npm provenance](https://docs.npmjs.com/generating-provenance-statements) via GitHub Actions OIDC.
@@ -24,7 +24,7 @@ Requires **Node.js ≥ 24**. Dual-published ESM + CJS with bundled `.d.ts` / `.d
 ## Quick start
 
 ```ts
-import type { PackageNamePort } from "@contriwork/PACKAGE_NAME";
+import type { NotificationsPort } from "@contriwork/notifications";
 
 // TODO: one-line example once the port has real methods.
 ```
@@ -41,4 +41,4 @@ pnpm build
 
 ## License
 
-MIT — see [LICENSE](https://github.com/contriwork/contriwork-PACKAGE_NAME/blob/main/LICENSE).
+MIT — see [LICENSE](https://github.com/contriwork/contriwork-notifications/blob/main/LICENSE).

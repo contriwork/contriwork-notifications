@@ -10,10 +10,10 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
-REPO_URL="https://github.com/contriwork/contriwork-PACKAGE_NAME"
-NUGET_ID="Contriwork.PackageName"
-PYPI_ID="contriwork-PACKAGE_NAME"
-NPM_ID="@contriwork/PACKAGE_NAME"
+REPO_URL="https://github.com/contriwork/contriwork-notifications"
+NUGET_ID="Contriwork.Notifications"
+PYPI_ID="contriwork-notifications"
+NPM_ID="@contriwork/notifications"
 
 die()     { printf '\033[31m✘\033[0m %s\n' "$*" >&2; exit 1; }
 ok()      { printf '\033[32m✓\033[0m %s\n' "$*"; }

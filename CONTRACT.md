@@ -1,4 +1,4 @@
-# CONTRACT — PackageName
+# CONTRACT — Notifications
 
 This document is the **language-agnostic contract** for this package. It is the single source of truth for the public surface. Every change to public behavior MUST start here before any code is written in `python/`, `csharp/`, or `typescript/`.
 
@@ -83,7 +83,7 @@ If the package takes configuration (credentials, timeouts, endpoints), document 
 
 | Key | Env var | Type | Default | Required | Notes |
 |-----|---------|------|---------|----------|-------|
-| `timeout_ms` | `CONTRIWORK_PACKAGE_NAME_TIMEOUT_MS` | int | `5000` | no | Upper bound for any single operation. |
+| `timeout_ms` | `CONTRIWORK_NOTIFICATIONS_TIMEOUT_MS` | int | `5000` | no | Upper bound for any single operation. |
 
 > **TODO:** Fill in, or write "This package takes no configuration." and delete the table.
 
