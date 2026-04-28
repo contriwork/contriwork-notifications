@@ -1,18 +1,438 @@
 {
-  "$schema_note": "Cross-language contract fixture. Python (pytest), C# (xUnit) and TypeScript (vitest) MUST load this file and produce identical results for every case. Fixture shape is stable within one schema_version; bumping schema_version requires updating all three runners in the same PR.",
+  "$schema_note": "Cross-language contract fixture. Python (pytest), C# (xUnit) and TypeScript (vitest) MUST load this file and produce identical results for every case. Fixture shape is stable within one schema_version; bumping schema_version requires updating all three runners in the same PR. Adapter behaviors use a per-call outcome sequence: each entry corresponds to one deliver() invocation. After the sequence is exhausted, the last outcome repeats.",
   "schema_version": 1,
-  "contract_revision": "v0",
+  "contract_revision": "v1",
   "example_case_shape": {
-    "name": "descriptive kebab-case id",
+    "name": "descriptive_snake_case_id",
     "description": "one-line human summary",
-    "input": "any JSON value the port accepts",
-    "expected_output": "any JSON value the port returns, or null if expected_error is set",
-    "expected_error": {
-      "code": "STABLE_SCREAMING_SNAKE_CASE code from CONTRACT.md error taxonomy",
-      "message_contains": "optional substring match; null to skip"
+    "input": {
+      "adapters": [
+        {
+          "name": "memory-1",
+          "behavior": {
+            "sequence": [
+              { "status": "DELIVERED", "error_code": null }
+            ]
+          }
+        }
+      ],
+      "config": {
+        "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+        "quiet_hours": null,
+        "rate_limits": null
+      },
+      "send": {
+        "severity": "INFO",
+        "payload": { "title": "hello", "body": "world", "url": null, "url_title": null, "metadata": null }
+      }
     },
-    "tags": ["happy-path", "edge-case", "security"],
+    "expected_output": {
+      "ok": true,
+      "error_code": null,
+      "attempts": 1,
+      "results": [
+        { "adapter": "memory-1", "status": "DELIVERED", "attempts": 1, "error_code": null }
+      ]
+    },
+    "expected_error": null,
+    "tags": ["happy-path"],
     "skip_languages": []
   },
-  "cases": []
+  "cases": [
+    {
+      "name": "send_success_single_adapter",
+      "description": "Single adapter delivers on first attempt; ok=true, one DELIVERED outcome.",
+      "input": {
+        "adapters": [
+          { "name": "memory-1", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "INFO",
+          "payload": { "title": "hello", "body": "world" }
+        }
+      },
+      "expected_output": {
+        "ok": true,
+        "error_code": null,
+        "attempts": 1,
+        "results": [
+          { "adapter": "memory-1", "status": "DELIVERED", "attempts": 1, "error_code": null }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["happy-path", "multicast"]
+    },
+    {
+      "name": "send_success_multicast_all_delivered",
+      "description": "Three adapters all deliver in parallel; ok=true, three DELIVERED outcomes preserving constructor order.",
+      "input": {
+        "adapters": [
+          { "name": "memory-a", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } },
+          { "name": "memory-b", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } },
+          { "name": "memory-c", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "WARN",
+          "payload": { "title": "build failed", "body": "see CI" }
+        }
+      },
+      "expected_output": {
+        "ok": true,
+        "error_code": null,
+        "attempts": 3,
+        "results": [
+          { "adapter": "memory-a", "status": "DELIVERED", "attempts": 1, "error_code": null },
+          { "adapter": "memory-b", "status": "DELIVERED", "attempts": 1, "error_code": null },
+          { "adapter": "memory-c", "status": "DELIVERED", "attempts": 1, "error_code": null }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["happy-path", "multicast"]
+    },
+    {
+      "name": "send_partial_one_adapter_fails_others_succeed",
+      "description": "Three adapters: two deliver, one returns a permanent failure. ok=true because at least one delivered.",
+      "input": {
+        "adapters": [
+          { "name": "memory-a", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } },
+          { "name": "memory-b", "behavior": { "sequence": [ { "status": "PERMANENT_FAILURE", "error_code": "AUTH_FAILED" } ] } },
+          { "name": "memory-c", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "ERROR",
+          "payload": { "title": "deploy failed", "body": "step 4 of 7" }
+        }
+      },
+      "expected_output": {
+        "ok": true,
+        "error_code": null,
+        "attempts": 3,
+        "results": [
+          { "adapter": "memory-a", "status": "DELIVERED", "attempts": 1, "error_code": null },
+          { "adapter": "memory-b", "status": "PERMANENT_FAILURE", "attempts": 1, "error_code": "AUTH_FAILED" },
+          { "adapter": "memory-c", "status": "DELIVERED", "attempts": 1, "error_code": null }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["partial", "multicast"]
+    },
+    {
+      "name": "send_all_adapters_permanent_fail",
+      "description": "Every adapter returns a permanent failure; client returns ok=false with ALL_ADAPTERS_FAILED.",
+      "input": {
+        "adapters": [
+          { "name": "memory-a", "behavior": { "sequence": [ { "status": "PERMANENT_FAILURE", "error_code": "AUTH_FAILED" } ] } },
+          { "name": "memory-b", "behavior": { "sequence": [ { "status": "PERMANENT_FAILURE", "error_code": "ADAPTER_INVALID_PAYLOAD" } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "WARN",
+          "payload": { "title": "fan-out", "body": "no one home" }
+        }
+      },
+      "expected_output": {
+        "ok": false,
+        "error_code": "ALL_ADAPTERS_FAILED",
+        "attempts": 2,
+        "results": [
+          { "adapter": "memory-a", "status": "PERMANENT_FAILURE", "attempts": 1, "error_code": "AUTH_FAILED" },
+          { "adapter": "memory-b", "status": "PERMANENT_FAILURE", "attempts": 1, "error_code": "ADAPTER_INVALID_PAYLOAD" }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["error-path", "all-failed"]
+    },
+    {
+      "name": "retry_then_succeed",
+      "description": "Adapter returns RETRIABLE_FAILURE on attempts 1 and 2, then DELIVERED on attempt 3 within max_attempts=3.",
+      "input": {
+        "adapters": [
+          {
+            "name": "memory-flaky",
+            "behavior": {
+              "sequence": [
+                { "status": "RETRIABLE_FAILURE", "error_code": "TIMEOUT" },
+                { "status": "RETRIABLE_FAILURE", "error_code": "UPSTREAM_ERROR" },
+                { "status": "DELIVERED", "error_code": null }
+              ]
+            }
+          }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "INFO",
+          "payload": { "title": "eventual", "body": "third time's the charm" }
+        }
+      },
+      "expected_output": {
+        "ok": true,
+        "error_code": null,
+        "attempts": 3,
+        "results": [
+          { "adapter": "memory-flaky", "status": "DELIVERED", "attempts": 3, "error_code": null }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["retry", "happy-path-eventually"]
+    },
+    {
+      "name": "retry_max_exhausted",
+      "description": "Adapter returns RETRIABLE_FAILURE on every attempt; after max_attempts=3 the outcome is RETRIABLE_FAILURE and the client returns ALL_ADAPTERS_FAILED.",
+      "input": {
+        "adapters": [
+          {
+            "name": "memory-broken",
+            "behavior": {
+              "sequence": [
+                { "status": "RETRIABLE_FAILURE", "error_code": "TIMEOUT" },
+                { "status": "RETRIABLE_FAILURE", "error_code": "TIMEOUT" },
+                { "status": "RETRIABLE_FAILURE", "error_code": "TIMEOUT" }
+              ]
+            }
+          }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "ERROR",
+          "payload": { "title": "no luck", "body": "kept timing out" }
+        }
+      },
+      "expected_output": {
+        "ok": false,
+        "error_code": "ALL_ADAPTERS_FAILED",
+        "attempts": 3,
+        "results": [
+          { "adapter": "memory-broken", "status": "RETRIABLE_FAILURE", "attempts": 3, "error_code": "TIMEOUT" }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["retry", "error-path"]
+    },
+    {
+      "name": "quiet_hours_silent_downgrade_low_severity",
+      "description": "Inside the active quiet-hours window, an INFO send is delivered in silent mode; status is DELIVERED_SILENT, not dropped.",
+      "input": {
+        "adapters": [
+          { "name": "memory-1", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null, "silent_observed": true } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": { "start": "00:00", "end": "23:59", "timezone": "UTC", "bypass_severities": ["CRITICAL"] },
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "INFO",
+          "payload": { "title": "nightly", "body": "shhh" }
+        }
+      },
+      "expected_output": {
+        "ok": true,
+        "error_code": null,
+        "attempts": 1,
+        "results": [
+          { "adapter": "memory-1", "status": "DELIVERED_SILENT", "attempts": 1, "error_code": null }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["quiet-hours", "silent-downgrade"]
+    },
+    {
+      "name": "quiet_hours_critical_bypass",
+      "description": "Inside the active quiet-hours window, a CRITICAL send bypasses silent downgrade and is delivered normally.",
+      "input": {
+        "adapters": [
+          { "name": "memory-1", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null, "silent_observed": false } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": { "start": "00:00", "end": "23:59", "timezone": "UTC", "bypass_severities": ["CRITICAL"] },
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "CRITICAL",
+          "payload": { "title": "page", "body": "wake up" }
+        }
+      },
+      "expected_output": {
+        "ok": true,
+        "error_code": null,
+        "attempts": 1,
+        "results": [
+          { "adapter": "memory-1", "status": "DELIVERED", "attempts": 1, "error_code": null }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["quiet-hours", "critical-bypass"]
+    },
+    {
+      "name": "business_rate_limit_window_exhausted",
+      "description": "Adapter is configured with a business rate limit of 0 per window (effectively closed); the send is short-circuited with BUSINESS_RATE_LIMITED before deliver() is invoked.",
+      "input": {
+        "adapters": [
+          { "name": "memory-throttled", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": {
+            "memory-throttled": { "max_count": 0, "window_seconds": 60, "bypass_severities": ["CRITICAL"] }
+          }
+        },
+        "send": {
+          "severity": "WARN",
+          "payload": { "title": "throttled", "body": "shouldn't fire" }
+        }
+      },
+      "expected_output": {
+        "ok": false,
+        "error_code": "ALL_ADAPTERS_FAILED",
+        "attempts": 0,
+        "results": [
+          { "adapter": "memory-throttled", "status": "BUSINESS_RATE_LIMITED", "attempts": 0, "error_code": "BUSINESS_RATE_LIMITED" }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["rate-limit", "business"]
+    },
+    {
+      "name": "business_rate_limit_critical_bypass",
+      "description": "Adapter is configured with max_count=0 but bypass_severities=['CRITICAL']; a CRITICAL send is delivered normally.",
+      "input": {
+        "adapters": [
+          { "name": "memory-throttled", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": {
+            "memory-throttled": { "max_count": 0, "window_seconds": 60, "bypass_severities": ["CRITICAL"] }
+          }
+        },
+        "send": {
+          "severity": "CRITICAL",
+          "payload": { "title": "urgent", "body": "rate-limit bypassed" }
+        }
+      },
+      "expected_output": {
+        "ok": true,
+        "error_code": null,
+        "attempts": 1,
+        "results": [
+          { "adapter": "memory-throttled", "status": "DELIVERED", "attempts": 1, "error_code": null }
+        ]
+      },
+      "expected_error": null,
+      "tags": ["rate-limit", "critical-bypass"]
+    },
+    {
+      "name": "invalid_payload_oversize_title",
+      "description": "Payload title exceeds the 200-char cap; client rejects before any adapter is invoked. ok=false, error_code=INVALID_PAYLOAD, results is empty.",
+      "input": {
+        "adapters": [
+          { "name": "memory-1", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "INFO",
+          "payload": {
+            "title": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "body": "title is 201 chars, one over cap"
+          }
+        }
+      },
+      "expected_output": {
+        "ok": false,
+        "error_code": "INVALID_PAYLOAD",
+        "attempts": 0,
+        "results": []
+      },
+      "expected_error": null,
+      "tags": ["validation", "security"]
+    },
+    {
+      "name": "invalid_payload_non_https_url",
+      "description": "Payload URL uses http:// scheme; client rejects with INVALID_PAYLOAD before any adapter is invoked.",
+      "input": {
+        "adapters": [
+          { "name": "memory-1", "behavior": { "sequence": [ { "status": "DELIVERED", "error_code": null } ] } }
+        ],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "INFO",
+          "payload": {
+            "title": "linked",
+            "body": "with a non-https url",
+            "url": "http://example.com/insecure"
+          }
+        }
+      },
+      "expected_output": {
+        "ok": false,
+        "error_code": "INVALID_PAYLOAD",
+        "attempts": 0,
+        "results": []
+      },
+      "expected_error": null,
+      "tags": ["validation", "security"]
+    },
+    {
+      "name": "empty_adapters_noop",
+      "description": "Client constructed with an empty adapter list; send is a no-op and returns ok=true with an empty results array.",
+      "input": {
+        "adapters": [],
+        "config": {
+          "retry": { "max_attempts": 3, "base_delay_ms": 0, "max_delay_ms": 0, "jitter_ratio": 0.0 },
+          "quiet_hours": null,
+          "rate_limits": null
+        },
+        "send": {
+          "severity": "INFO",
+          "payload": { "title": "void", "body": "nobody listening" }
+        }
+      },
+      "expected_output": {
+        "ok": true,
+        "error_code": null,
+        "attempts": 0,
+        "results": []
+      },
+      "expected_error": null,
+      "tags": ["edge-case", "noop"]
+    }
+  ]
 }

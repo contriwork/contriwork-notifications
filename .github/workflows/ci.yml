@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   python:
-    name: python
+    name: ci / python
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -36,7 +36,7 @@ jobs:
       - run: uv build
 
   csharp:
-    name: csharp
+    name: ci / csharp
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,7 +53,7 @@ jobs:
       - run: dotnet pack --no-build -c Release -o ./artifacts
 
   typescript:
-    name: typescript
+    name: ci / typescript
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -74,7 +74,7 @@ jobs:
       - run: pnpm build
 
   contract:
-    name: contract
+    name: ci / contract
     needs: [python, csharp, typescript]
     runs-on: ubuntu-latest
     steps:

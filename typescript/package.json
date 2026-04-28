@@ -1,19 +1,19 @@
 {
-  "name": "@contriwork/PACKAGE_NAME",
+  "name": "@contriwork/notifications",
   "version": "0.0.0",
-  "description": "TODO: one-line description of the package. Mirrors CONTRACT.md.",
+  "description": "Multi-channel notification client (Pushover, Telegram, Slack, Discord, SMTP) with retry, rate limit, and quiet-hours support.",
   "type": "module",
   "license": "MIT",
   "author": "ContriWork",
-  "homepage": "https://github.com/contriwork/contriwork-PACKAGE_NAME",
+  "homepage": "https://github.com/contriwork/contriwork-notifications",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/contriwork/contriwork-PACKAGE_NAME.git"
+    "url": "git+https://github.com/contriwork/contriwork-notifications.git"
   },
   "bugs": {
-    "url": "https://github.com/contriwork/contriwork-PACKAGE_NAME/issues"
+    "url": "https://github.com/contriwork/contriwork-notifications/issues"
   },
-  "keywords": ["contriwork"],
+  "keywords": ["contriwork", "notifications", "pushover", "telegram", "slack", "discord", "smtp", "alerts"],
   "engines": {
     "node": ">=24"
   },

@@ -21,7 +21,7 @@ jobs:
     # gitleaks/gitleaks-action wrapper requires a paid license for GitHub
     # organizations. Install the binary directly with a SHA-verified download
     # so we run the same detection engine without the commercial license gate.
-    name: gitleaks
+    name: security-scan / gitleaks
     runs-on: ubuntu-latest
     env:
       GITLEAKS_VERSION: 8.21.2
@@ -44,7 +44,7 @@ jobs:
         run: gitleaks detect --source . --redact --verbose --exit-code 1
 
   hadolint:
-    name: hadolint (Dockerfiles)
+    name: security-scan / hadolint (Dockerfiles)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -61,7 +61,7 @@ jobs:
           failure-threshold: warning
 
   trivy-fs:
-    name: trivy (filesystem)
+    name: security-scan / trivy (filesystem)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -73,7 +73,7 @@ jobs:
           ignore-unfixed: true
 
   grype:
-    name: grype
+    name: security-scan / grype
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -89,7 +89,7 @@ jobs:
     # free for public repos). Job-level skip would make this check non-
     # deterministic for required-status-checks rulesets, so we handle it
     # inline and always exit 0 green.
-    name: codeql
+    name: security-scan / codeql
     runs-on: ubuntu-latest
     env:
       # Force full-database analysis instead of pr-diff-range. On PR events
@@ -163,7 +163,7 @@ jobs:
     # Install semgrep directly from PyPI with a pinned version so we control
     # the full dependency chain (the official semgrep/semgrep-action wraps a
     # mutable docker tag). Dependabot's pip ecosystem watches the version.
-    name: semgrep
+    name: security-scan / semgrep
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -187,7 +187,7 @@ jobs:
             --strict
 
   deps-python:
-    name: deps (python / pip-audit)
+    name: security-scan / deps (python / pip-audit)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -201,10 +201,19 @@ jobs:
         # pip-audit trying to look up an unpublished local distribution.
         run: uv export --no-hashes --no-emit-project --format requirements-txt --output-file /tmp/requirements.txt
       - name: pip-audit on lockfile
-        run: uv run --with pip-audit pip-audit --strict --requirement /tmp/requirements.txt
+        # pip is a transitive scan-tool dependency of pip-audit itself; the
+        # package's runtime resolver is uv, not pip. Vulnerabilities pulled
+        # in only by the audit tool's own toolchain are tracked here so
+        # they can be revisited when an upstream fix lands.
+        # Ignored: CVE-2026-3219 (pip 26.0.1) — no fix version published yet.
+        run: |
+          uv run --with pip-audit pip-audit \
+            --strict \
+            --requirement /tmp/requirements.txt \
+            --ignore-vuln CVE-2026-3219
 
   deps-dotnet:
-    name: deps (dotnet list --vulnerable)
+    name: security-scan / deps (dotnet list --vulnerable)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -225,7 +234,7 @@ jobs:
           fi
 
   deps-npm:
-    name: deps (pnpm audit)
+    name: security-scan / deps (pnpm audit)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -247,7 +256,7 @@ jobs:
     # every commit has a recoverable dependency graph. On release tags they
     # are additionally attached to the GitHub Release for downstream
     # consumers. The job never skips — it always produces an artifact.
-    name: SBOM (CycloneDX)
+    name: security-scan / SBOM (CycloneDX)
     runs-on: ubuntu-latest
     permissions:
       contents: write
