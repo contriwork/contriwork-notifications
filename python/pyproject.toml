@@ -22,7 +22,10 @@ classifiers = [
   "Typing :: Typed",
 ]
 dynamic = ["version"]
-dependencies = []
+dependencies = [
+  "httpx>=0.28",
+  "aiosmtplib>=3.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/contriwork/contriwork-notifications"
@@ -34,6 +37,7 @@ Changelog = "https://github.com/contriwork/contriwork-notifications/blob/main/CH
 dev = [
   "pytest>=8.3",
   "pytest-asyncio>=0.24",
+  "pytest-httpx>=0.34",
   "ruff>=0.8",
   "mypy>=1.13",
   "pip-audit>=2.7",
@@ -71,7 +75,10 @@ select = [
   "ASYNC",              # async issues
   "SIM",                # simplify
 ]
-ignore = ["S101"]       # allow assert in tests
+ignore = [
+  "S101",     # allow assert in tests
+  "RUF001",   # Severity icons are intentionally non-ASCII (ℹ ⚠ ❌ ⛔) per CONTRACT.md
+]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["S", "N"]
