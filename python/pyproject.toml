@@ -37,6 +37,7 @@ Changelog = "https://github.com/contriwork/contriwork-notifications/blob/main/CH
 dev = [
   "pytest>=8.3",
   "pytest-asyncio>=0.24",
+  "pytest-httpx>=0.34",
   "ruff>=0.8",
   "mypy>=1.13",
   "pip-audit>=2.7",
