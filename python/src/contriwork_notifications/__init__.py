@@ -9,7 +9,7 @@ from __future__ import annotations
 from importlib.metadata import PackageNotFoundError, version
 
 from .adapter import Adapter, AdapterDeliverResult, AdapterStatus
-from .adapters import InMemoryAdapter
+from .adapters import InMemoryAdapter, PushoverAdapter
 from .client import NotificationClient
 from .config import (
     NotificationConfig,
@@ -35,6 +35,7 @@ __all__ = [
     "NotificationPort",
     "OutcomeStatus",
     "Payload",
+    "PushoverAdapter",
     "QuietHoursConfig",
     "RateLimitPolicy",
     "RetryConfig",

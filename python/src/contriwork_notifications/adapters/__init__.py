@@ -7,5 +7,6 @@ imports — the package never auto-discovers or instantiates them.
 from __future__ import annotations
 
 from .memory import InMemoryAdapter
+from .pushover import PushoverAdapter
 
-__all__ = ["InMemoryAdapter"]
+__all__ = ["InMemoryAdapter", "PushoverAdapter"]

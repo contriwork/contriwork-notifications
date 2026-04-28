@@ -22,7 +22,9 @@ classifiers = [
   "Typing :: Typed",
 ]
 dynamic = ["version"]
-dependencies = []
+dependencies = [
+  "httpx>=0.28",
+]
 
 [project.urls]
 Homepage = "https://github.com/contriwork/contriwork-notifications"
