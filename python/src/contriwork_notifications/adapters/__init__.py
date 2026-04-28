@@ -8,5 +8,6 @@ from __future__ import annotations
 
 from .memory import InMemoryAdapter
 from .pushover import PushoverAdapter
+from .telegram import TelegramAdapter
 
-__all__ = ["InMemoryAdapter", "PushoverAdapter"]
+__all__ = ["InMemoryAdapter", "PushoverAdapter", "TelegramAdapter"]

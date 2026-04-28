@@ -32,6 +32,7 @@ _PUBLIC_SYMBOLS = {
     "RetryConfig",
     "SendResult",
     "Severity",
+    "TelegramAdapter",
 }
 
 

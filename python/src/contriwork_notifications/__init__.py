@@ -9,7 +9,7 @@ from __future__ import annotations
 from importlib.metadata import PackageNotFoundError, version
 
 from .adapter import Adapter, AdapterDeliverResult, AdapterStatus
-from .adapters import InMemoryAdapter, PushoverAdapter
+from .adapters import InMemoryAdapter, PushoverAdapter, TelegramAdapter
 from .client import NotificationClient
 from .config import (
     NotificationConfig,
@@ -41,6 +41,7 @@ __all__ = [
     "RetryConfig",
     "SendResult",
     "Severity",
+    "TelegramAdapter",
     "__version__",
 ]
 
