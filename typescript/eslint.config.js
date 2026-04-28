@@ -42,6 +42,11 @@ export default [
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
       "@typescript-eslint/explicit-function-return-type": "warn",
+      // The TypeScript pattern `const X = {...} as const; type X = ...`
+      // looks like a redeclaration to the base ESLint rule but is valid
+      // TS (separate value + type namespaces). Use the TS-aware variant.
+      "no-redeclare": "off",
+      "@typescript-eslint/no-redeclare": "error",
       "no-console": ["warn", { allow: ["warn", "error"] }],
     },
   },

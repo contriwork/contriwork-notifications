@@ -1,16 +1,16 @@
+import type { Payload } from "./payload";
+import type { SendResult } from "./result";
+import type { Severity } from "./severity";
+
 /**
- * Port definition — see CONTRACT.md for the language-agnostic specification.
- * Method names on this interface mirror the Python (`snake_case`) and C#
- * (`PascalCaseAsync`) ports. Any signature change MUST land in CONTRACT.md
- * first and be mirrored in all three languages in the same PR.
+ * Transport-only notification port. CONTRACT.md §Port.
+ * The concrete implementation is `NotificationClient`; consumers may type
+ * against this interface to substitute the implementation in tests.
  */
-export interface NotificationsPort {
+export interface NotificationPort {
   /**
-   * TODO: replace with a real contract method.
-   *
-   * @param input - Non-empty UTF-8 string, length <= 4096.
-   * @returns A non-empty string derived deterministically from `input`.
-   * @throws Error tagged with code `INVALID_INPUT` when validation fails.
+   * Multicast the payload to every configured adapter in parallel.
+   * See CONTRACT.md §Methods → `send` for the full semantics.
    */
-  example(input: string): Promise<string>;
+  send(severity: Severity, payload: Payload): Promise<SendResult>;
 }
