@@ -14,6 +14,7 @@ from .adapters import (
     InMemoryAdapter,
     PushoverAdapter,
     SlackWebhookAdapter,
+    SmtpAdapter,
     TelegramAdapter,
 )
 from .client import NotificationClient
@@ -49,6 +50,7 @@ __all__ = [
     "SendResult",
     "Severity",
     "SlackWebhookAdapter",
+    "SmtpAdapter",
     "TelegramAdapter",
     "__version__",
 ]

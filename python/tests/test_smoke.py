@@ -34,6 +34,7 @@ _PUBLIC_SYMBOLS = {
     "SendResult",
     "Severity",
     "SlackWebhookAdapter",
+    "SmtpAdapter",
     "TelegramAdapter",
 }
 

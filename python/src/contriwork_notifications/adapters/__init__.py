@@ -10,6 +10,7 @@ from .discord import DiscordWebhookAdapter
 from .memory import InMemoryAdapter
 from .pushover import PushoverAdapter
 from .slack import SlackWebhookAdapter
+from .smtp import SmtpAdapter
 from .telegram import TelegramAdapter
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     "InMemoryAdapter",
     "PushoverAdapter",
     "SlackWebhookAdapter",
+    "SmtpAdapter",
     "TelegramAdapter",
 ]
