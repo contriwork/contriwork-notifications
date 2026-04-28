@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+from importlib import import_module
 
-import contriwork_notifications
 from contriwork_notifications import (
     NotificationClient,
     NotificationConfig,
@@ -13,6 +13,12 @@ from contriwork_notifications import (
     Payload,
     Severity,
 )
+
+# Resolved at import time and used for module-level reflection (presence of
+# every advertised public symbol, package version). Imported via importlib
+# rather than ``import contriwork_notifications`` to avoid mixing the two
+# import styles for the same module in the same file.
+_PACKAGE = import_module("contriwork_notifications")
 
 _PUBLIC_SYMBOLS = {
     "Adapter",
@@ -40,11 +46,11 @@ _PUBLIC_SYMBOLS = {
 
 
 def test_version_is_set() -> None:
-    assert contriwork_notifications.__version__
+    assert _PACKAGE.__version__
 
 
 def test_public_surface_is_complete() -> None:
-    missing = sorted(s for s in _PUBLIC_SYMBOLS if not hasattr(contriwork_notifications, s))
+    missing = sorted(s for s in _PUBLIC_SYMBOLS if not hasattr(_PACKAGE, s))
     assert missing == [], f"missing public symbols: {missing}"
 
 

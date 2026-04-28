@@ -69,5 +69,6 @@ async def test_url_appended_to_text(httpx_mock: HTTPXMock) -> None:
     payload = Payload(title="t", body="b", url="https://example.com", url_title="link")
     await adapter.deliver(Severity.INFO, payload, silent=False)
     body = json.loads(httpx_mock.get_request().read())  # type: ignore[union-attr]
-    assert "https://example.com" in body["text"]
-    assert "link" in body["text"]
+    text: str = body["text"]
+    # endswith is anchored, so a trailing "https://example.com.evil" would not match.
+    assert text.endswith("link: https://example.com")

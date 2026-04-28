@@ -43,7 +43,6 @@ class Adapter(Protocol):
 
     async def is_available(self) -> bool:
         """Cheap precheck: credentials present, platform supported, etc."""
-        ...
 
     async def deliver(
         self,
@@ -52,4 +51,3 @@ class Adapter(Protocol):
         silent: bool,
     ) -> AdapterDeliverResult:
         """Send one notification. See class docstring for ``silent`` semantics."""
-        ...

@@ -23,4 +23,3 @@ class NotificationPort(Protocol):
 
         See CONTRACT.md §Methods → ``send`` for the full semantics.
         """
-        ...
