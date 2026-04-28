@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   AdapterStatus,
   ErrorCode,
+  InMemoryAdapter,
   NotificationClient,
   OutcomeStatus,
   Severity,
@@ -77,5 +78,20 @@ describe("smoke", () => {
     });
     expect(result.ok).toBe(false);
     expect(result.errorCode).toBe(ErrorCode.InvalidPayload);
+  });
+
+  it("InMemoryAdapter records every deliver call and returns sequence outcomes", async () => {
+    const adapter = new InMemoryAdapter("test", [
+      { status: AdapterStatus.Delivered },
+    ]);
+    const result = await adapter.deliver(
+      Severity.Info,
+      { title: "x", body: "y" },
+      false,
+    );
+    expect(result.status).toBe(AdapterStatus.Delivered);
+    expect(adapter.calls).toHaveLength(1);
+    expect(adapter.calls[0]?.severity).toBe(Severity.Info);
+    expect(adapter.calls[0]?.silent).toBe(false);
   });
 });

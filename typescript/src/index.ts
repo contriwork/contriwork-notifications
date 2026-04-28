@@ -7,6 +7,7 @@
 
 export type { Adapter, AdapterDeliverResult } from "./adapter";
 export { AdapterStatus } from "./adapter";
+export { InMemoryAdapter } from "./adapters";
 export { NotificationClient } from "./client";
 export type {
   NotificationConfig,
