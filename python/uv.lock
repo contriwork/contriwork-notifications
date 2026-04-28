@@ -105,7 +105,7 @@ wheels = [
 ]
 
 [[package]]
-name = "contriwork-package-name"
+name = "contriwork-notifications"
 source = { editable = "." }
 
 [package.dev-dependencies]

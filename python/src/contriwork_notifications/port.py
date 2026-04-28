@@ -1,30 +1,26 @@
-"""Port definition — see CONTRACT.md for the language-agnostic specification."""
+"""Public port: NotificationPort Protocol. CONTRACT.md §Port."""
 
 from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
+from .payload import Payload
+from .result import SendResult
+from .severity import Severity
+
 
 @runtime_checkable
-class NotificationsPort(Protocol):
-    """Placeholder port. Replace with the real contract methods.
+class NotificationPort(Protocol):
+    """Transport-only notification port.
 
-    Keep method names aligned with C# (`PascalCaseAsync`) and TypeScript
-    (`camelCase`) implementations. Any signature change here MUST land in
-    CONTRACT.md first and be mirrored in all three languages in the same PR.
+    The concrete implementation is :class:`contriwork_notifications.NotificationClient`,
+    which also satisfies this Protocol so callers can type against the
+    abstraction.
     """
 
-    async def example(self, input: str) -> str:
-        """TODO: replace with a real contract method.
+    async def send(self, severity: Severity, payload: Payload) -> SendResult:
+        """Multicast the payload to every configured adapter in parallel.
 
-        Args:
-            input: Non-empty UTF-8 string, length <= 4096.
-
-        Returns:
-            A non-empty string derived deterministically from ``input``.
-
-        Raises:
-            ValueError: If ``input`` fails validation (error code
-                ``INVALID_INPUT`` per CONTRACT.md).
+        See CONTRACT.md §Methods → ``send`` for the full semantics.
         """
         ...
