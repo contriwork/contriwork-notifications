@@ -20,6 +20,7 @@ _PUBLIC_SYMBOLS = {
     "AdapterOutcome",
     "AdapterStatus",
     "ErrorCode",
+    "InMemoryAdapter",
     "NotificationClient",
     "NotificationConfig",
     "NotificationPort",
