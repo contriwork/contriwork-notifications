@@ -19,6 +19,28 @@ public sealed record AdapterDeliverResult(
     ErrorCode? ErrorCode = null,
     string? Detail = null);
 
+/// <summary>Wire-format helpers for <see cref="AdapterStatus"/>.</summary>
+public static class AdapterStatusExtensions
+{
+    /// <summary>SCREAMING_SNAKE_CASE wire string used by the contract fixtures.</summary>
+    public static string ToWireString(this AdapterStatus status) => status switch
+    {
+        AdapterStatus.Delivered => "DELIVERED",
+        AdapterStatus.RetriableFailure => "RETRIABLE_FAILURE",
+        AdapterStatus.PermanentFailure => "PERMANENT_FAILURE",
+        _ => throw new ArgumentOutOfRangeException(nameof(status), status, null),
+    };
+
+    /// <summary>Parse the wire-format string back into an <see cref="AdapterStatus"/>.</summary>
+    public static AdapterStatus FromWireString(string value) => value switch
+    {
+        "DELIVERED" => AdapterStatus.Delivered,
+        "RETRIABLE_FAILURE" => AdapterStatus.RetriableFailure,
+        "PERMANENT_FAILURE" => AdapterStatus.PermanentFailure,
+        _ => throw new ArgumentException($"Unknown adapter status wire string: '{value}'", nameof(value)),
+    };
+}
+
 /// <summary>
 /// Adapter contract. CONTRACT.md §Adapter protocol.
 /// Implementations MUST: expose a stable string <c>Name</c>; return cheaply
