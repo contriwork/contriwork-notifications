@@ -6,9 +6,16 @@ imports — the package never auto-discovers or instantiates them.
 
 from __future__ import annotations
 
+from .discord import DiscordWebhookAdapter
 from .memory import InMemoryAdapter
 from .pushover import PushoverAdapter
 from .slack import SlackWebhookAdapter
 from .telegram import TelegramAdapter
 
-__all__ = ["InMemoryAdapter", "PushoverAdapter", "SlackWebhookAdapter", "TelegramAdapter"]
+__all__ = [
+    "DiscordWebhookAdapter",
+    "InMemoryAdapter",
+    "PushoverAdapter",
+    "SlackWebhookAdapter",
+    "TelegramAdapter",
+]

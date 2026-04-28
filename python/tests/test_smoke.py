@@ -19,6 +19,7 @@ _PUBLIC_SYMBOLS = {
     "AdapterDeliverResult",
     "AdapterOutcome",
     "AdapterStatus",
+    "DiscordWebhookAdapter",
     "ErrorCode",
     "InMemoryAdapter",
     "NotificationClient",

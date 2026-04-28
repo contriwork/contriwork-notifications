@@ -9,7 +9,13 @@ from __future__ import annotations
 from importlib.metadata import PackageNotFoundError, version
 
 from .adapter import Adapter, AdapterDeliverResult, AdapterStatus
-from .adapters import InMemoryAdapter, PushoverAdapter, SlackWebhookAdapter, TelegramAdapter
+from .adapters import (
+    DiscordWebhookAdapter,
+    InMemoryAdapter,
+    PushoverAdapter,
+    SlackWebhookAdapter,
+    TelegramAdapter,
+)
 from .client import NotificationClient
 from .config import (
     NotificationConfig,
@@ -28,6 +34,7 @@ __all__ = [
     "AdapterDeliverResult",
     "AdapterOutcome",
     "AdapterStatus",
+    "DiscordWebhookAdapter",
     "ErrorCode",
     "InMemoryAdapter",
     "NotificationClient",
