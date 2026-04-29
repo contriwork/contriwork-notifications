@@ -35,6 +35,7 @@ export default [
         Headers: "readonly",
         AbortController: "readonly",
         AbortSignal: "readonly",
+        BodyInit: "readonly",
       },
     },
     plugins: {
@@ -64,6 +65,10 @@ export default [
     files: ["tests/**/*.ts"],
     rules: {
       "security/detect-non-literal-fs-filename": "off",
+      // Tests build configs and adapter outcomes from JSON fixtures; the
+      // index/key values come from the controlled test_cases.json file,
+      // not from user input.
+      "security/detect-object-injection": "off",
     },
   },
   prettier,
