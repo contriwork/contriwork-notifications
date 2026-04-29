@@ -20,6 +20,7 @@ export default [
       globals: {
         // Node 24 globals used in tests and runtime entry points.
         URL: "readonly",
+        URLSearchParams: "readonly",
         console: "readonly",
         process: "readonly",
         setTimeout: "readonly",
@@ -28,6 +29,12 @@ export default [
         clearInterval: "readonly",
         Buffer: "readonly",
         globalThis: "readonly",
+        fetch: "readonly",
+        Request: "readonly",
+        Response: "readonly",
+        Headers: "readonly",
+        AbortController: "readonly",
+        AbortSignal: "readonly",
       },
     },
     plugins: {

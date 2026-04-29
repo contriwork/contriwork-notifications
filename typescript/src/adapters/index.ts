@@ -6,3 +6,4 @@
  */
 
 export { InMemoryAdapter } from "./memory";
+export { PushoverAdapter, type PushoverOptions } from "./pushover";
