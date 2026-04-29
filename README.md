@@ -12,11 +12,11 @@
 
 </div>
 
-> **TODO:** One-line description of what this package does. Replace this block.
+A transport-only notification library: send a `(severity, payload)` to one or more adapters (Slack, Discord, Telegram, Pushover, SMTP, in-memory) with built-in retry, quiet hours, and per-adapter rate limiting — same API surface in Python, .NET, and Node.js.
 
 ## Why
 
-> **TODO:** Explain the problem this package solves and the gap it fills in the consumer's stack.
+Most ContriWork consumers eventually need to push alerts to several places at once (chat webhook + email, sometimes a phone push). Doing this once per repo means re-implementing retry, quiet hours, and per-adapter rate limiting from scratch — and ending up with three subtly different implementations across Python / .NET / npm. This package centralises the transport layer behind a single contract; anything beyond `send` (deduplication, persistent queues, named channels, templating) stays in consumer code by design.
 
 ## Install
 
@@ -33,22 +33,44 @@ All three publish at the **same version** on the **same release**. See [`VERSION
 ### Python
 
 ```python
-from contriwork_notifications import NotificationsPort
-# TODO: example
+import asyncio
+from contriwork_notifications import (
+    NotificationClient, Severity, Payload, SlackWebhookAdapter,
+)
+
+client = NotificationClient([SlackWebhookAdapter(webhook_url="https://hooks.slack.com/...")])
+result = asyncio.run(client.send(Severity.WARN, Payload(title="Build failed", body="See CI for details")))
+print(result.ok, result.attempts)
 ```
 
 ### C#
 
 ```csharp
 using Contriwork.Notifications;
-// TODO: example
+using Contriwork.Notifications.Adapters;
+
+var client = new NotificationClient(new IAdapter[]
+{
+    new SlackWebhookAdapter("https://hooks.slack.com/..."),
+});
+
+var result = await client.SendAsync(Severity.Warn, new Payload("Build failed", "See CI for details"));
+Console.WriteLine($"{result.Ok} {result.Attempts}");
 ```
 
 ### TypeScript
 
 ```typescript
-import { NotificationsPort } from "@contriwork/notifications";
-// TODO: example
+import {
+  NotificationClient, Severity, SlackWebhookAdapter,
+} from "@contriwork/notifications";
+
+const client = new NotificationClient([
+  new SlackWebhookAdapter({ webhookUrl: "https://hooks.slack.com/..." }),
+]);
+
+const result = await client.send(Severity.Warn, { title: "Build failed", body: "See CI for details" });
+console.log(result.ok, result.attempts);
 ```
 
 ## Architecture

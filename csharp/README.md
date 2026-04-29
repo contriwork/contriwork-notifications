@@ -23,9 +23,21 @@ Targets **.NET 10 LTS**.
 
 ```csharp
 using Contriwork.Notifications;
+using Contriwork.Notifications.Adapters;
 
-// TODO: one-line example once the port has real methods.
+var client = new NotificationClient(new IAdapter[]
+{
+    new SlackWebhookAdapter("https://hooks.slack.com/..."),
+});
+
+var result = await client.SendAsync(
+    Severity.Warn,
+    new Payload("Build failed", "See CI for details"));
+
+Console.WriteLine($"{result.Ok} {result.Attempts}");
 ```
+
+For the full set of adapters (`InMemoryAdapter`, `PushoverAdapter`, `TelegramAdapter`, `SlackWebhookAdapter`, `DiscordWebhookAdapter`, `SmtpAdapter`) and the configuration knobs (`NotificationConfig`, `RetryConfig`, `RateLimitPolicy`, `QuietHoursConfig`), see [`CONTRACT.md`](https://github.com/contriwork/contriwork-notifications/blob/main/CONTRACT.md).
 
 ## Local development
 

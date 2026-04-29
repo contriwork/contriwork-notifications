@@ -24,10 +24,23 @@ Requires **Node.js ≥ 24**. Dual-published ESM + CJS with bundled `.d.ts` / `.d
 ## Quick start
 
 ```ts
-import type { NotificationsPort } from "@contriwork/notifications";
+import {
+  NotificationClient, Severity, SlackWebhookAdapter,
+} from "@contriwork/notifications";
 
-// TODO: one-line example once the port has real methods.
+const client = new NotificationClient([
+  new SlackWebhookAdapter({ webhookUrl: "https://hooks.slack.com/..." }),
+]);
+
+const result = await client.send(Severity.Warn, {
+  title: "Build failed",
+  body: "See CI for details",
+});
+
+console.log(result.ok, result.attempts);
 ```
+
+For the full set of adapters (`InMemoryAdapter`, `PushoverAdapter`, `TelegramAdapter`, `SlackWebhookAdapter`, `DiscordWebhookAdapter`, `SmtpAdapter`) and the configuration knobs (`NotificationConfig`, `RetryConfig`, `RateLimitPolicy`, `QuietHoursConfig`), see [`CONTRACT.md`](https://github.com/contriwork/contriwork-notifications/blob/main/CONTRACT.md).
 
 ## Local development
 
