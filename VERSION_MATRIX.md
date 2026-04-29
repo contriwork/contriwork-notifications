@@ -2,9 +2,10 @@
 
 This file documents which language runtime versions and contract revision each release of this package supports. Every release MUST add a row here. The release workflow refuses to publish if `VERSION` is bumped without a corresponding row.
 
-| Version | Python | .NET | Node | Contract | npm strategy | Released  |
-|---------|--------|------|------|----------|--------------|-----------|
+| Version | Python | .NET | Node | Contract | npm strategy | Released   |
+|---------|--------|------|------|----------|--------------|------------|
 | 0.0.0   | 3.13   | 10.0 | 24   | v0       | pure-TS      | unreleased |
+| 0.1.0   | 3.13   | 10.0 | 24   | v1       | pure-TS      | 2026-04-29 |
 
 ## Rules
 

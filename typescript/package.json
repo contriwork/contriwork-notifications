@@ -1,6 +1,6 @@
 {
   "name": "@contriwork/notifications",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Multi-channel notification client (Pushover, Telegram, Slack, Discord, SMTP) with retry, rate limit, and quiet-hours support.",
   "type": "module",
   "license": "MIT",
