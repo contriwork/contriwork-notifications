@@ -10,4 +10,16 @@ export default defineConfig({
       include: ["src/**/*.ts"],
     },
   },
+  resolve: {
+    // Map NodeNext-style ".js" imports inside the source tree back to ".ts"
+    // so Vitest can resolve them to TypeScript source. tsc/tsup keep the
+    // ".js" extension in build output (required by NodeNext module
+    // resolution at runtime); Vitest does not transparently rewrite them.
+    alias: [
+      {
+        find: /^(\..*)\.js$/,
+        replacement: "$1.ts",
+      },
+    ],
+  },
 });
