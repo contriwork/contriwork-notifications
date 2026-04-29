@@ -15,6 +15,9 @@ export {
   type PushoverOptions,
   SlackWebhookAdapter,
   type SlackWebhookOptions,
+  SmtpAdapter,
+  type SmtpOptions,
+  type SmtpTransporter,
   TelegramAdapter,
   type TelegramOptions,
 } from "./adapters";
