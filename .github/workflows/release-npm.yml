@@ -57,7 +57,12 @@ jobs:
       - name: set package version
         run: npm version "${{ env.PKG_VERSION }}" --no-git-tag-version --allow-same-version
 
-      - name: publish to npm with provenance (OIDC)
+      - name: publish to npm with provenance
+        # Hybrid auth: NODE_AUTH_TOKEN is the npm-side registry token (org
+        # member), and `--provenance` lets npm sign the publish using the
+        # workflow's GitHub OIDC id-token (`id-token: write` permission
+        # above). Provenance therefore stays cryptographically verifiable
+        # on sigstore even though registry auth is token-based.
         run: npm publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
