@@ -7,7 +7,17 @@
 
 export type { Adapter, AdapterDeliverResult } from "./adapter";
 export { AdapterStatus } from "./adapter";
-export { InMemoryAdapter, PushoverAdapter, type PushoverOptions } from "./adapters";
+export {
+  DiscordWebhookAdapter,
+  type DiscordWebhookOptions,
+  InMemoryAdapter,
+  PushoverAdapter,
+  type PushoverOptions,
+  SlackWebhookAdapter,
+  type SlackWebhookOptions,
+  TelegramAdapter,
+  type TelegramOptions,
+} from "./adapters";
 export { NotificationClient } from "./client";
 export type {
   NotificationConfig,
