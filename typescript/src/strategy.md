@@ -1,12 +1,26 @@
 # npm Production Strategy
 
-The ContriWork roadmap (`PACKAGES_ROADMAP.md §3.5`) lists five possible strategies for shipping a package on npm. This file documents which one this package uses and **why**.
+The ContriWork roadmap (`PACKAGES_ROADMAP.md §3.5`) lists five possible
+strategies for shipping a package on npm. This file documents which one
+this package uses and **why**.
 
 ## Decision
 
 **Strategy A — pure-TS reimplementation** (default).
 
-> **TODO:** Confirm strategy A is the right call for this package. If not, update the decision below and fill in the rationale.
+The orchestrator, retry/backoff loop, quiet-hours window evaluator,
+sliding-window rate limiter, payload validator, and every adapter that
+talks HTTP (Pushover, Telegram, Slack, Discord) are written from scratch
+in TypeScript. They share the cross-language `contract-tests/test_cases.json`
+fixture suite with the Python and C# implementations and pass it
+identically — no shared binary or compiled artefact crosses the language
+boundary.
+
+The SMTP adapter delegates wire-protocol details to **nodemailer**, an
+npm runtime dependency. This is a normal Node-ecosystem dependency, not
+a prebuilt binary, WASM module, sidecar process, or HTTP service —
+nodemailer ships pure JavaScript and is itself a Strategy A library.
+Wrapping it does not change the shipping classification.
 
 ## Alternatives considered
 
@@ -20,8 +34,31 @@ The ContriWork roadmap (`PACKAGES_ROADMAP.md §3.5`) lists five possible strateg
 
 ## Rationale
 
-> **TODO:** One-paragraph justification for the chosen strategy. If the package logic is pure and contract tests enforce parity, strategy A is the default. If any of (B)–(E) is chosen, document the blocking reason why (A) fails (e.g. "reference implementation is 20 KLOC of Rust — reimplementation risk is too high").
+The notifications port is pure logic plus thin HTTP/SMTP transport:
+
+- The **orchestrator** (multicast, retry, quiet hours, rate limit) has
+  no I/O of its own — it is a small state machine over the adapter
+  list. Reimplementing it three times costs less than carrying a
+  shared compiled core, and the cross-language contract fixtures pin
+  parity precisely.
+- HTTP adapters use **`globalThis.fetch`** (Node 24+ stable). No
+  binary, no WASM, no native module.
+- SMTP uses **nodemailer**, which is itself Strategy A on npm. The
+  alternative — re-implementing RFC 5321/5322 in TypeScript — is well
+  beyond what the package needs and would introduce more risk than the
+  delegation does.
+- iMessage (in the Python tree) is **out of scope on npm** —
+  documented in `docs/SCOPE.md`. There is no compelling reason to ship
+  a Node-side iMessage adapter (no parity benefit, macOS-only).
+
+Strategies B–E would introduce binary distribution / native-build /
+sidecar-management costs that this package does not need. Revisit only
+if a future feature genuinely cannot be expressed in pure TypeScript
+plus the existing runtime deps.
 
 ## Revisiting this decision
 
-A strategy change is a **minor bump** at minimum and likely a **major** because consumers see different install-time artefacts (prebuilt binaries, WASM glue, postinstall scripts). Do not switch strategies silently — open an ADR-style issue first and link it from this file.
+A strategy change is a **minor bump** at minimum and likely a **major**
+because consumers see different install-time artefacts (prebuilt
+binaries, WASM glue, postinstall scripts). Do not switch strategies
+silently — open an ADR-style issue first and link it from this file.
